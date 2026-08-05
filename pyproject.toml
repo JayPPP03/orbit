@@ -1,0 +1,69 @@
+[tool.poetry]
+name = "orbit"
+version = "0.1.0"
+description = "ORBIT — Autonomous User Lifecycle Intelligence Platform"
+authors = ["Jay Patel <pjay205335@gmail.com>"]
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/JayPPP03/orbit"
+keywords = ["machine-learning", "causal-inference", "uplift-modeling", "mlops", "real-time"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3.11",
+]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+polars = "^1.0"
+duckdb = "^1.0"
+pyarrow = "^17.0"
+xgboost = "^2.1"
+scikit-learn = "^1.5"
+optuna = "^4.0"
+torch = "^2.4"
+fastapi = "^0.112"
+uvicorn = {extras = ["standard"], version = "^0.30"}
+redis = "^5.0"
+pydantic = "^2.8"
+mlflow = "^2.15"
+econml = "^0.15"
+llama-cpp-python = "^0.3"
+unsloth = "^2024.8"
+transformers = "^4.44"
+peft = "^0.12"
+accelerate = "^0.33"
+bitsandbytes = "^0.43"
+prometheus-client = "^0.20"
+cvxpy = "^1.5"
+structlog = "^24.4"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6"
+black = "^24.8"
+pytest = "^8.3"
+pytest-cov = "^5.0"
+locust = "^2.31"
+jupyter = "^1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I", "W", "N", "UP", "B", "C4", "SIM"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --tb=short"
