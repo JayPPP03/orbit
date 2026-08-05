@@ -1,0 +1,62 @@
+stages:
+  download:
+    cmd: python -m orbit.ingestion.download_yoochoose
+    outs:
+      - data/raw/yoochoose.parquet:
+          cache: true
+
+  clean:
+    cmd: python -m orbit.ingestion.enrich_data
+    deps:
+      - data/raw/yoochoose.parquet
+    outs:
+      - data/processed/cleaned.parquet:
+          cache: true
+
+  features:
+    cmd: python -m orbit.features.engineering
+    deps:
+      - data/processed/cleaned.parquet
+    outs:
+      - data/features/features.parquet:
+          cache: true
+
+  train_xgboost:
+    cmd: python -m orbit.models.train --model xgboost
+    deps:
+      - data/features/features.parquet
+    outs:
+      - models/xgboost_model.pkl:
+          cache: true
+    metrics:
+      - eval_results/xgboost_metrics.json:
+          cache: false
+
+  train_multitask:
+    cmd: python -m orbit.models.train --model multitask
+    deps:
+      - data/features/features.parquet
+    outs:
+      - models/multitask_model.pt:
+          cache: true
+    metrics:
+      - eval_results/multitask_metrics.json:
+          cache: false
+
+  causal_uplift:
+    cmd: python -m orbit.causal.uplift_engine --train
+    deps:
+      - data/features/features.parquet
+      - models/xgboost_model.pkl
+    outs:
+      - models/uplift_model.pkl:
+          cache: true
+
+  evaluate:
+    cmd: python -m orbit.evaluation.run_benchmark
+    deps:
+      - models/xgboost_model.pkl
+      - models/uplift_model.pkl
+    metrics:
+      - eval_results/benchmark_results.json:
+          cache: false
